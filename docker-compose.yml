@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: mydb
+    ports:
+      - "5433:5433"
+
+  app:
+    build: .
+    depends_on:
+      - postgres
+    environment:
+      PG_USER: myuser
+      PG_PW: mypassword
+      PG_HOST: postgres   # Updated from "localhost" to "postgres"
+      PG_PORT: 5433
+      PG_DBNAME: mydb
+      JWT_SECRET: "delhiMumbaiChennaiKolkata"  # Fixed invalid []byte syntax
+      SERVER_PORT: 8080
+      IS_MIGRATIONS_NEED: "false"
+      MAX_DB_CONNS: 10
+    ports:
+      - "8080:8080"
