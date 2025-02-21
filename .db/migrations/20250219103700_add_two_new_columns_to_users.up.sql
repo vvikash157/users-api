@@ -1,0 +1,3 @@
+ALTER TABLE users 
+ADD COLUMN user_id VARCHAR(255) UNIQUE,
+ADD COLUMN access_token TEXT;

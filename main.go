@@ -2,21 +2,24 @@ package main
 
 import (
 	"Login/config"
+	"Login/db"
 	"Login/routes"
-	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
 )
 
 func main() {
-	config.ConnectDB()
+	db.Migrations()
+	db.ConnectDB()
+	log := config.InitializeLogger()
+
 	//config.DB.AutoMigrate(&models.User{})
 
 	router := mux.NewRouter()
-	routes.SetupAuthenticationRutes(router)
+	// s := config.NewGlobalUse(db, log)
+	routes.SetupRoutes(router)
 
-	fmt.Println("connection tanatan")
+	log.Info("connection tanatan")
 	log.Fatal(http.ListenAndServe(":8080", router))
 }
