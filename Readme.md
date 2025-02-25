@@ -75,7 +75,7 @@ Curls for Api:
     "age": 30
 }'  
 
-2.User Login
+2.User Login:
 
 curl --location 'http://localhost:8080/login' \
 --header 'Content-Type: application/json' \
@@ -86,6 +86,7 @@ curl --location 'http://localhost:8080/login' \
 }'
 
 3.Create Task:
+
 curl --location 'http://localhost:8080/tasks' \
 --header 'Content-Type: application/json' \
 --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqd3RfZXhwaXJ5IjoxNzQwODYxNTU1LCJ1c2VyaWQiOiIwM2QzNDUyZC1mYWIzLTQ3NmYtYjAxMS0xY2Y1NzUxOTRiMTIifQ.omul7iGCn-PZnvkwmTrx3yzdgOMV_pQrMcXT_ri-zM4' \
@@ -95,16 +96,21 @@ curl --location 'http://localhost:8080/tasks' \
     "status": "approved"
 }'
 
-4. Get Task By page and no of records 
+4. Get Task By page and no of records : 
+
 curl --location 'http://localhost:8080/tasks?page=1&pageSize=2&status=Done' \
 --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqd3RfZXhwaXJ5IjoxNzQwODYxNTU1LCJ1c2VyaWQiOiIwM2QzNDUyZC1mYWIzLTQ3NmYtYjAxMS0xY2Y1NzUxOTRiMTIifQ.omul7iGCn-PZnvkwmTrx3yzdgOMV_pQrMcXT_ri-zM4' \
 --data ''
 
-5. Get task by id 
+
+5. Get task by id : 
+
 curl --location 'http://localhost:8080/tasks/get/4' \
 --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqd3RfZXhwaXJ5IjoxNzQwODYxNTU1LCJ1c2VyaWQiOiIwM2QzNDUyZC1mYWIzLTQ3NmYtYjAxMS0xY2Y1NzUxOTRiMTIifQ.omul7iGCn-PZnvkwmTrx3yzdgOMV_pQrMcXT_ri-zM4'
 
-6. Update a task 
+
+6. Update a task :  
+
 curl --location --globoff --request PUT 'http://localhost:8080/tasks/{1}' \
 --header 'Content-Type: application/json' \
 --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqd3RfZXhwaXJ5IjoxNzQwODYxNTU1LCJ1c2VyaWQiOiIwM2QzNDUyZC1mYWIzLTQ3NmYtYjAxMS0xY2Y1NzUxOTRiMTIifQ.omul7iGCn-PZnvkwmTrx3yzdgOMV_pQrMcXT_ri-zM4' \
@@ -113,6 +119,11 @@ curl --location --globoff --request PUT 'http://localhost:8080/tasks/{1}' \
     "status": "approved"
 }'
 
-7. delete a task by id 
+7. delete a task by id : 
+
+ curl --location --request DELETE 'http://localhost:8080/task/delete/11' \
+--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqd3RfZXhwaXJ5IjoxNzQwODYxNTU1LCJ1c2VyaWQiOiIwM2QzNDUyZC1mYWIzLTQ3NmYtYjAxMS0xY2Y1NzUxOTRiMTIifQ.omul7iGCn-PZnvkwmTrx3yzdgOMV_pQrMcXT_ri-zM4' \
+--data ''  
+
 
 
