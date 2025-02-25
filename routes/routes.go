@@ -14,7 +14,7 @@ func SetupRoutes(router *mux.Router) {
 
 	router.Handle("/tasks", middleware.RateLimitingMiddleware(middleware.AuthMiddleware(http.HandlerFunc(controllers.CreateTask)))).Methods("POST")
 	router.Handle("/tasks", middleware.RateLimitingMiddleware(middleware.AuthMiddleware(http.HandlerFunc(controllers.GetTasks)))).Methods("GET")
-	router.Handle("/tasks/{id}", middleware.RateLimitingMiddleware(middleware.AuthMiddleware(http.HandlerFunc(controllers.GetTaskHandler)))).Methods("GET")
+	router.Handle("/tasks/get/{id}", middleware.RateLimitingMiddleware(middleware.AuthMiddleware(http.HandlerFunc(controllers.GetTaskHandler)))).Methods("GET")
 	router.Handle("/tasks/{id}", middleware.RateLimitingMiddleware(middleware.AuthMiddleware(http.HandlerFunc(controllers.UpdateTaskHandler)))).Methods("PUT")
 	router.Handle("/task/delete/{id}", middleware.RateLimitingMiddleware(middleware.AuthMiddleware(http.HandlerFunc(controllers.DeleteTaskHandler)))).Methods("DELETE")
 

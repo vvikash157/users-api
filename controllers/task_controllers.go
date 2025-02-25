@@ -61,6 +61,7 @@ func GetTasks(w http.ResponseWriter, r *http.Request) {
 
 func GetTaskHandler(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
+	
 	task, err := service.GetTaskById(params["id"], task)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
