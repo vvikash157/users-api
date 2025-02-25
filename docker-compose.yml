@@ -9,19 +9,32 @@ services:
       POSTGRES_PASSWORD: mypassword
       POSTGRES_DB: mydb
     ports:
-      - "5433:5433"
+      - "5432:5432"
+
+  redis:
+    image: redis:latest
+    restart: always
+    command: ["redis-server", "--requirepass", ""]
+    environment:
+      REDIS_PASSWORD: 
+    ports:
+      - "6379:6379"
 
   app:
     build: .
     depends_on:
       - postgres
+      - redis
     environment:
       PG_USER: myuser
       PG_PW: mypassword
-      PG_HOST: postgres   # Updated from "localhost" to "postgres"
-      PG_PORT: 5433
+      PG_HOST: postgres   # Connects to PostgreSQL container
+      PG_PORT: 5432
       PG_DBNAME: mydb
-      JWT_SECRET: "delhiMumbaiChennaiKolkata"  # Fixed invalid []byte syntax
+      REDIS_HOST: redis   # Connects to Redis container
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: 
+      JWT_SECRET: "delhiMumbaiChennaiKolkata"
       SERVER_PORT: 8080
       IS_MIGRATIONS_NEED: "false"
       MAX_DB_CONNS: 10

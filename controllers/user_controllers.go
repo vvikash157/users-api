@@ -16,7 +16,7 @@ func UserSignUp(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userDetails, err := service.CreateUser()
+	userDetails, err := service.CreateUser(user)
 	if err != nil {
 		http.Error(w, "error to create user", http.StatusBadRequest)
 		return
@@ -43,14 +43,14 @@ func UserLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := service.AuthenticateUsers(userID, credentials.Email, credentials.Password)
+	user, err := service.AuthenticateUsers(credentials.Email, credentials.Password)
 	if err != nil {
 		http.Error(w, "Authentication failed for users", http.StatusBadRequest)
 		return
 	}
 
 	response := map[string]string{
-		"user_id": user.UserID,
+		"userid":  user["userid"].(string),
 		"message": " user successfully logged in the system!! ",
 	}
 	json.NewEncoder(w).Encode(response)
@@ -58,7 +58,6 @@ func UserLogin(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetUserProfile(w http.ResponseWriter, r *http.Request) {
-	// Extract user ID from context
 	ctx := r.Context()
 	userID, ok := ctx.Value("userID").(string)
 	if !ok {
@@ -73,13 +72,12 @@ func GetUserProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Return user profile (excluding password)
 	response := map[string]interface{}{
-		"id":      user.ID,
-		"user_id": user.UserID,
-		"name":    user.Name,
-		"email":   user.Email,
-		"age":     user.Age,
+		"id":     user.ID,
+		"userid": user.UserID,
+		"name":   user.Name,
+		"email":  user.Email,
+		"age":    user.Age,
 	}
 
 	json.NewEncoder(w).Encode(response)
@@ -93,14 +91,12 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Parse request body
 	var updatedUser models.User
 	if err := json.NewDecoder(r.Body).Decode(&updatedUser); err != nil {
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
 		return
 	}
 
-	// Find and update the user
 	var user models.User
 	err := db.DB.Where("user_id = ?", userID).First(&user).Error
 	if err != nil {
@@ -108,7 +104,6 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Only update fields that are provided in the request
 	if updatedUser.Name != "" {
 		user.Name = updatedUser.Name
 	}

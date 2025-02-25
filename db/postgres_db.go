@@ -1,6 +1,7 @@
 package db
 
 import (
+	"fmt"
 	"os"
 	"strconv"
 	"time"
@@ -44,9 +45,20 @@ func ConnectDB() (*gorm.DB, error) {
 
 }
 
+// docker run --name postgres_server -e POSTGRES_USER=myuser -e POSTGRES_PASSWORD=mypassword -e POSTGRES_DB=mydb -p 5433:5432 -d postgres
+
 func getConnectionString() string {
-	// return fmt.Sprintf("postgres://%s:%s@%s/%s?sslmode=disable",os.Getenv("mydb_pg_user"),os.Getenv("mydb_pg_pw"),os.Getenv("mydb_pg_host"),os.Getenv("mydb_pg_dbname"))
-	return "postgres://myuser:mypassword@localhost:5432/mydb?sslmode=disable"
+	x := fmt.Sprintf(
+		"postgres://%s:%s@%s:%s/%s?sslmode=disable",
+		os.Getenv("PG_USER"),
+		os.Getenv("PG_PW"),
+		os.Getenv("PG_HOST"),
+		os.Getenv("PG_PORT"),
+		os.Getenv("PG_DBNAME"),
+	)
+	return x
+
+	// return "postgres://myuser:mypassword@localhost:5432/mydb?sslmode=disable"
 }
 
 func getDBConnection() int {

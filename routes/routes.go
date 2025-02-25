@@ -10,11 +10,12 @@ import (
 
 func SetupRoutes(router *mux.Router) {
 	router.HandleFunc("/signup", controllers.UserSignUp).Methods("POST")
-	router.Handle("/login", middleware.AuthMiddleware(http.HandlerFunc(controllers.UserLogin))).Methods("POST")
+	router.Handle("/login", middleware.RateLimitingMiddleware(middleware.AuthMiddleware(http.HandlerFunc(controllers.UserLogin)))).Methods("POST")
 
-	// protectedRoutes := router.PathPrefix("/dev").Subrouter()
-	// protectedRoutes.Use(middleware.AuthMiddleware)
+	router.Handle("/tasks", middleware.RateLimitingMiddleware(middleware.AuthMiddleware(http.HandlerFunc(controllers.CreateTask)))).Methods("POST")
+	router.Handle("/tasks", middleware.RateLimitingMiddleware(middleware.AuthMiddleware(http.HandlerFunc(controllers.GetTasks)))).Methods("GET")
+	router.Handle("/tasks/{id}", middleware.RateLimitingMiddleware(middleware.AuthMiddleware(http.HandlerFunc(controllers.GetTaskHandler)))).Methods("GET")
+	router.Handle("/tasks/{id}", middleware.RateLimitingMiddleware(middleware.AuthMiddleware(http.HandlerFunc(controllers.UpdateTaskHandler)))).Methods("PUT")
+	router.Handle("/task/delete/{id}", middleware.RateLimitingMiddleware(middleware.AuthMiddleware(http.HandlerFunc(controllers.DeleteTaskHandler)))).Methods("DELETE")
 
-	// protectedRoutes.HandleFunc("/profile", controllers.GetUserProfile).Methods("GET")
-	// protectedRoutes.HandleFunc("/update", controllers.UpdateUser).Methods("POST")
 }

@@ -9,9 +9,9 @@ import (
 // InitializeLogger creates and returns a new logrus instance
 func InitializeLogger() *logrus.Logger {
 	logger := logrus.New()
-	logger.SetOutput(os.Stdout)                     // Log to console
-	logger.SetFormatter(&logrus.JSONFormatter{})    // JSON formatting
-	logger.SetLevel(logrus.DebugLevel)              // Set log level
+	logger.SetOutput(os.Stdout)                     
+	logger.SetFormatter(&logrus.JSONFormatter{})    
+	logger.SetLevel(logrus.DebugLevel)              
 
 	return logger
 }

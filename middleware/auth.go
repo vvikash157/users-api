@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"Login/db"
 	"Login/utils"
 	"context"
 	"fmt"
@@ -8,11 +9,10 @@ import (
 	"strings"
 )
 
-// AuthMiddleware validates JWT before allowing access
 func AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		authHeader := r.Header.Get("Authorization")
-		fmt.Println("yes middleware executed")
+
 		if authHeader == "" {
 			http.Error(w, "Authorization header missing", http.StatusUnauthorized)
 			return
@@ -24,16 +24,28 @@ func AuthMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
-		userID, err := utils.ValidateJWT(tokenParts[1])
+		token := tokenParts[1]
+		redisClient := db.GetRedisClient() 
+		ctx := context.Background()
+		fmt.Println("redis: ", db.GetRedisClient())
+		
+		userID, err := utils.ValidateJWT(token)
 		if err != nil {
 			http.Error(w, "Invalid or expired token", http.StatusUnauthorized)
 			return
 		}
+		key := "accessToken:" + userID
+	
+		sessionExists, err := redisClient.Exists(ctx, key).Result()
+		if err != nil || sessionExists == 0 {
+			http.Error(w, "Session expired, please log in again", http.StatusUnauthorized)
+			http.Redirect(w, r, "/login", http.StatusSeeOther)
+			return
+		}
 
-		// Store userID in request context
-		ctx := r.Context()
 		ctx = context.WithValue(ctx, "userid", userID)
+		r = r.WithContext(ctx)
 
-		next.ServeHTTP(w, r.WithContext(ctx))
+		next.ServeHTTP(w, r)
 	})
 }

@@ -2,7 +2,7 @@ package service
 
 import (
 	"Login/db"
-	m "Login/models"
+	"Login/models"
 	"Login/utils"
 	"fmt"
 
@@ -14,12 +14,9 @@ import (
 // Logger instance
 var log = logrus.New()
 
-// CreateUser inserts a new user into the database
-func CreateUser() (map[string]interface{}, error) {
-	var u *m.User
+func CreateUser(u models.User) (map[string]interface{}, error) {
 	u.UserID = uuid.New().String()
 
-	// Hash the password before storing it
 	hashedPassword, err := utils.HashPassword(u.Password)
 	if err != nil {
 		log.Error("Error while hashing password: ", err)
@@ -27,34 +24,23 @@ func CreateUser() (map[string]interface{}, error) {
 	}
 	u.Password = hashedPassword
 
-	// Generate access token
-	accessToken, err := utils.GenerateJWT(u.UserID)
+	tokens, err := utils.GenerateAndStoreTokens(u.UserID)
 	if err != nil {
-		log.Error("Error while generating access token: ", err)
 		return nil, err
 	}
-	u.AccessToken = accessToken
+	u.AccessToken = tokens["access_token"].(string)
 
-	// Insert user into the database
 	if err := db.DB.Create(&u).Error; err != nil {
 		log.Error("Error while inserting user into DB: ", err)
 		return nil, err
 	}
 
-	// Return response
-	response := map[string]interface{}{
-		"access_token": u.AccessToken,
-		"user_id":      u.UserID,
-	}
-	return response, nil
+	return tokens, nil
 }
 
-// AuthenticateUsers checks user credentials
-func AuthenticateUsers(userid, email, password string) (*m.User, error) {
-	var foundUser m.User
-
-	// Fetch user by email
-	err := db.DB.Where("email = ? AND user_id = ?", email, userid).First(&foundUser).Error
+func AuthenticateUsers(email, password string) (map[string]interface{}, error) {
+	var foundUser models.User
+	err := db.DB.Where("email = ?", email).First(&foundUser).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return nil, fmt.Errorf("user not found")
@@ -63,11 +49,15 @@ func AuthenticateUsers(userid, email, password string) (*m.User, error) {
 		return nil, err
 	}
 
-	// Validate password
 	if !utils.CheckHashPassword(password, foundUser.Password) {
 		return nil, fmt.Errorf("invalid password")
 	}
 
+	tokens, err := utils.GenerateAndStoreTokens(foundUser.UserID)
+	if err != nil {
+		return nil, err
+	}
+
 	log.Info("User successfully logged in: ", foundUser.UserID)
-	return &foundUser, nil
+	return tokens, nil
 }
