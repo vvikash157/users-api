@@ -3,11 +3,13 @@ package middleware
 import (
 	"Login/db"
 	"Login/utils"
+	"Login/config"
 	"context"
-	"fmt"
 	"net/http"
 	"strings"
 )
+
+  var log=config.InitializeLogger()
 
 func AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -25,24 +27,25 @@ func AuthMiddleware(next http.Handler) http.Handler {
 		}
 
 		token := tokenParts[1]
-		redisClient := db.GetRedisClient() 
+		redisClient := db.GetRedisClient()
 		ctx := context.Background()
-		fmt.Println("redis: ", db.GetRedisClient())
-		
+		log.Info("redis: ", db.GetRedisClient())
+
 		userID, err := utils.ValidateJWT(token)
 		if err != nil {
-			http.Error(w, "Invalid or expired token", http.StatusUnauthorized)
+			log.Error(w, "Invalid or expired token", http.StatusUnauthorized)
 			return
 		}
 		key := "accessToken:" + userID
-	
+
 		sessionExists, err := redisClient.Exists(ctx, key).Result()
 		if err != nil || sessionExists == 0 {
 			http.Error(w, "Session expired, please log in again", http.StatusUnauthorized)
 			http.Redirect(w, r, "/login", http.StatusSeeOther)
 			return
 		}
-		
+		log.Info("user validated with userid : ",userID)
+
 		ctx = context.WithValue(r.Context(), "userid", userID)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})

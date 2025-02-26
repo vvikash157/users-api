@@ -57,6 +57,23 @@ func UserLogin(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func LogoutHandler(w http.ResponseWriter, r *http.Request) {
+	userID, ok := r.Context().Value("userid").(string)
+	if !ok {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	if err := service.LogoutUser(userID); err != nil {
+		http.Error(w, "Failed to log out", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]string{"message": "Logged out successfully"})
+}
+
 func GetUserProfile(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	userID, ok := ctx.Value("userID").(string)

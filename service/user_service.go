@@ -4,6 +4,7 @@ import (
 	"Login/db"
 	"Login/models"
 	"Login/utils"
+	"context"
 	"fmt"
 
 	"github.com/google/uuid"
@@ -60,4 +61,12 @@ func AuthenticateUsers(email, password string) (map[string]interface{}, error) {
 
 	log.Info("User successfully logged in: ", foundUser.UserID)
 	return tokens, nil
+}
+
+func LogoutUser(userID string) error {
+	redisClient := db.GetRedisClient()
+	ctx := context.Background()
+
+	key := "accessToken:" + userID
+	return redisClient.Del(ctx, key).Err()
 }
