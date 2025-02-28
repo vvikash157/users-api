@@ -63,67 +63,57 @@ Error level 🔴
 Debug level 🟡
 
 
-Curls for Api:
-1. UserSignup:
+#Commands to create table 
 
- curl --location 'http://localhost:8080/signup' \
---header 'Content-Type: application/json' \
---data-raw '{
-    "name": "vikash",
-    "email": "abc@gmail.com",
-    "password": "abc@12",
-    "age": 30
-}'  
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    user_id TEXT UNIQUE NOT NULL,
+    access_token TEXT,
+    name TEXT NOT NULL,
+    email TEXT UNIQUE NOT NULL,
+    password TEXT NOT NULL,
+    age INT,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);
+CREATE OR REPLACE FUNCTION update_timestamp()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = NOW();
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
 
-2.User Login:
-
-curl --location 'http://localhost:8080/login' \
---header 'Content-Type: application/json' \
---header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqd3RfZXhwaXJ5IjoxNzQwODYxNTU1LCJ1c2VyaWQiOiIwM2QzNDUyZC1mYWIzLTQ3NmYtYjAxMS0xY2Y1NzUxOTRiMTIifQ.omul7iGCn-PZnvkwmTrx3yzdgOMV_pQrMcXT_ri-zM4' \
---data-raw '{
-    "email":"abc@gmail.com",
-    "password":"abc@12"
-}'
-
-3.Create Task:
-
-curl --location 'http://localhost:8080/tasks' \
---header 'Content-Type: application/json' \
---header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqd3RfZXhwaXJ5IjoxNzQwODYxNTU1LCJ1c2VyaWQiOiIwM2QzNDUyZC1mYWIzLTQ3NmYtYjAxMS0xY2Y1NzUxOTRiMTIifQ.omul7iGCn-PZnvkwmTrx3yzdgOMV_pQrMcXT_ri-zM4' \
---data '{
-    "title": "singham",
-    "description": "actor is ajay ",
-    "status": "approved"
-}'
-
-4. Get Task By page and no of records : 
-
-curl --location 'http://localhost:8080/tasks?page=1&pageSize=2&status=Done' \
---header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqd3RfZXhwaXJ5IjoxNzQwODYxNTU1LCJ1c2VyaWQiOiIwM2QzNDUyZC1mYWIzLTQ3NmYtYjAxMS0xY2Y1NzUxOTRiMTIifQ.omul7iGCn-PZnvkwmTrx3yzdgOMV_pQrMcXT_ri-zM4' \
---data ''
+CREATE TRIGGER trigger_update_timestamp
+BEFORE UPDATE ON users
+FOR EACH ROW
+EXECUTE FUNCTION update_timestamp();
 
 
-5. Get task by id : 
+CREATE TABLE tasks (
+    id SERIAL PRIMARY KEY,
+    title TEXT NOT NULL,
+    description TEXT,
+    status TEXT DEFAULT 'Pending',
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);
 
-curl --location 'http://localhost:8080/tasks/get/4' \
---header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqd3RfZXhwaXJ5IjoxNzQwODYxNTU1LCJ1c2VyaWQiOiIwM2QzNDUyZC1mYWIzLTQ3NmYtYjAxMS0xY2Y1NzUxOTRiMTIifQ.omul7iGCn-PZnvkwmTrx3yzdgOMV_pQrMcXT_ri-zM4'
+CREATE OR REPLACE FUNCTION update_timestamp()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = NOW();
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
 
-
-6. Update a task :  
-
-curl --location --globoff --request PUT 'http://localhost:8080/tasks/{1}' \
---header 'Content-Type: application/json' \
---header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqd3RfZXhwaXJ5IjoxNzQwODYxNTU1LCJ1c2VyaWQiOiIwM2QzNDUyZC1mYWIzLTQ3NmYtYjAxMS0xY2Y1NzUxOTRiMTIifQ.omul7iGCn-PZnvkwmTrx3yzdgOMV_pQrMcXT_ri-zM4' \
---data '{
-    "description": "thriller movie",
-    "status": "approved"
-}'
-
-7. delete a task by id : 
-
- curl --location --request DELETE 'http://localhost:8080/task/delete/11' \
---header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqd3RfZXhwaXJ5IjoxNzQwODYxNTU1LCJ1c2VyaWQiOiIwM2QzNDUyZC1mYWIzLTQ3NmYtYjAxMS0xY2Y1NzUxOTRiMTIifQ.omul7iGCn-PZnvkwmTrx3yzdgOMV_pQrMcXT_ri-zM4' \
---data ''  
+CREATE TRIGGER trigger_update_task_timestamp
+BEFORE UPDATE ON tasks
+FOR EACH ROW
+EXECUTE FUNCTION update_timestamp();
 
 
 
+
+#docker command for check ip address 
+`docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' containerID`

@@ -13,7 +13,7 @@ import (
 )
 
 // Logger instance
-var log = logrus.New()
+var log=config.InitializeLogger()
 
 func CreateUser(u models.User) (map[string]interface{}, error) {
 	u.UserID = uuid.New().String()

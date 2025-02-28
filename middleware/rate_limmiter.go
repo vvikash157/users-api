@@ -5,18 +5,16 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"Login/db"
 	"time"
 
 	"github.com/go-redis/redis/v8"
 )
 
-var ctx = context.Background()
-
-var redisClient = redis.NewClient(&redis.Options{
-	Addr:     "localhost:6379",
-	Password: "",
-	DB:       0,
-})
+var( 
+	ctx = context.Background()
+	redisClient =db.GetRateLimitClient()
+) 
 
 func RateLimitingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

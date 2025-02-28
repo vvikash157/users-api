@@ -12,6 +12,8 @@ import (
 	_ "github.com/lib/pq"
 )
 
+var log=config.InitializeLogger()
+
 /*
 Migrations applies all pending migrations
 use this command to generate sql file

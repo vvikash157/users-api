@@ -12,8 +12,10 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-var secretKey = []byte(os.Getenv("JWT_SECRET"))
-var log = logrus.New()
+var(
+	secretKey = []byte(os.Getenv("JWT_SECRET"))
+ 	log=config.InitializeLogger()
+)
 
 func GenerateJWT(userID string, expiry time.Duration) (string, error) {
 	claims := jwt.MapClaims{

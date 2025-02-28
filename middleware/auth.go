@@ -9,7 +9,10 @@ import (
 	"strings"
 )
 
-  var log=config.InitializeLogger()
+var( 
+	log=config.InitializeLogger()
+	redisClient=db.GetSessionClient()
+   )
 
 func AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -27,9 +30,8 @@ func AuthMiddleware(next http.Handler) http.Handler {
 		}
 
 		token := tokenParts[1]
-		redisClient := db.GetRedisClient()
 		ctx := context.Background()
-		log.Info("redis: ", db.GetRedisClient())
+		// log.Info("redis: ", db.GetRedisClient())
 
 		userID, err := utils.ValidateJWT(token)
 		if err != nil {

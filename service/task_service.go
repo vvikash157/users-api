@@ -57,7 +57,6 @@ func UpdateTask(taskID string, updatedTask models.Task) (*models.Task, error) {
 	return &task, nil
 }
 
-// DeleteTask removes a task by ID
 func DeleteTask(taskID int) error {
 	if err := db.DB.Delete(&models.Task{}, taskID).Error; err != nil {
 		return err
