@@ -1,6 +1,6 @@
 module Login
 
-go 1.22.6
+go 1.23
 
 require (
 	github.com/go-redis/redis/v8 v8.11.5
