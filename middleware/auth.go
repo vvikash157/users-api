@@ -1,18 +1,18 @@
 package middleware
 
 import (
+	"Login/config"
 	"Login/db"
 	"Login/utils"
-	"Login/config"
 	"context"
 	"net/http"
 	"strings"
 )
 
-var( 
-	log=config.InitializeLogger()
-	redisClient=db.GetSessionClient()
-   )
+var (
+	log         = config.InitializeLogger()
+	redisClient = db.GetSessionClient()
+)
 
 func AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -31,7 +31,6 @@ func AuthMiddleware(next http.Handler) http.Handler {
 
 		token := tokenParts[1]
 		ctx := context.Background()
-		// log.Info("redis: ", db.GetRedisClient())
 
 		userID, err := utils.ValidateJWT(token)
 		if err != nil {
@@ -46,7 +45,7 @@ func AuthMiddleware(next http.Handler) http.Handler {
 			http.Redirect(w, r, "/login", http.StatusSeeOther)
 			return
 		}
-		log.Info("user validated with userid : ",userID)
+		log.Info("user validated with userid : ", userID)
 
 		ctx = context.WithValue(r.Context(), "userid", userID)
 		next.ServeHTTP(w, r.WithContext(ctx))

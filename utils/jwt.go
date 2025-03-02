@@ -6,15 +6,15 @@ import (
 	"os"
 	"time"
 
+	"Login/config"
 	"Login/db"
 
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/sirupsen/logrus"
 )
 
-var(
+var (
 	secretKey = []byte(os.Getenv("JWT_SECRET"))
- 	log=config.InitializeLogger()
+	log       = config.InitializeLogger()
 )
 
 func GenerateJWT(userID string, expiry time.Duration) (string, error) {
@@ -48,13 +48,13 @@ func ValidateJWT(tokenString string) (string, error) {
 }
 
 func GenerateAndStoreTokens(userID string) (map[string]interface{}, error) {
-	accessToken, err := GenerateJWT(userID, 7*24*time.Hour) 
+	accessToken, err := GenerateJWT(userID, 7*24*time.Hour)
 	if err != nil {
 		log.Error("Error while generating access token: ", err)
 		return nil, err
 	}
 	key := "accessToken:" + userID
-	db.GetRedisClient().Set(context.Background(), key, accessToken, 7*24*time.Hour)
+	db.GetSessionClient().Set(context.Background(), key, accessToken, 7*24*time.Hour)
 
 	return map[string]interface{}{
 		"access_token": accessToken,

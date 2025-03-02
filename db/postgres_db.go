@@ -1,20 +1,20 @@
 package db
 
 import (
+	"Login/config"
 	"fmt"
 	"os"
 	"strconv"
 	"time"
 
-	"github.com/sirupsen/logrus"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 )
 
-var( 
-	DB *gorm.DB
-	log=config.InitializeLogger()
+var (
+	DB  *gorm.DB
+	log = config.InitializeLogger()
 )
 
 const MAX_DEFAULT_CONNECTION = 7
@@ -48,7 +48,6 @@ func ConnectDB() (*gorm.DB, error) {
 
 // docker run --name postgres_server -e POSTGRES_USER=myuser -e POSTGRES_PASSWORD=mypassword -e POSTGRES_DB=mydb -p 5433:5432 -d postgres
 //$env:POSTGRES_USER="myuser"; $env:POSTGRES_PASSWORD="mypassword"; $env:POSTGRES_DB="mydb"; $env:REDIS_PASSWORD="mypassword"; docker-compose up --build -d        run in powershell
-
 
 func getConnectionString() string {
 	return fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable", os.Getenv("POSTGRES_USER"), os.Getenv("POSTGRES_PASSWORD"), os.Getenv("POSTGRES_HOST"), os.Getenv("POSTGRES_PORT"), os.Getenv("POSTGRES_DB"))

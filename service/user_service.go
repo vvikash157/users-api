@@ -1,6 +1,7 @@
 package service
 
 import (
+	"Login/config"
 	"Login/db"
 	"Login/models"
 	"Login/utils"
@@ -8,12 +9,11 @@ import (
 	"fmt"
 
 	"github.com/google/uuid"
-	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 )
 
 // Logger instance
-var log=config.InitializeLogger()
+var log = config.InitializeLogger()
 
 func CreateUser(u models.User) (map[string]interface{}, error) {
 	u.UserID = uuid.New().String()
@@ -64,7 +64,7 @@ func AuthenticateUsers(email, password string) (map[string]interface{}, error) {
 }
 
 func LogoutUser(userID string) error {
-	redisClient := db.GetRedisClient()
+	redisClient := db.GetSessionClient()
 	ctx := context.Background()
 
 	key := "accessToken:" + userID
