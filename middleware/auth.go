@@ -37,8 +37,8 @@ func AuthMiddleware(next http.Handler) http.Handler {
 			log.Error(w, "Invalid or expired token", http.StatusUnauthorized)
 			return
 		}
-		key := "accessToken:" + userID
 
+		key := "accessToken:" + userID
 		sessionExists, err := redisClient.Exists(ctx, key).Result()
 		if err != nil || sessionExists == 0 {
 			http.Error(w, "Session expired, please log in again", http.StatusUnauthorized)
